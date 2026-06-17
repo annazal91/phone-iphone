@@ -1,61 +1,24 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Choose Your iPhone</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
+<title>iPhone Pro Landing</title>
 
-<div class="container">
-    <h1>Choose Your iPhone</h1>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-    <div class="section">
-        <h2>Select Model</h2>
-        <div class="cards">
-            <div class="card">iPhone 16</div>
-            <div class="card active" id="iphone17">iPhone 17</div>
-        </div>
-    </div>
-
-    <div class="section">
-        <h2>Select Storage</h2>
-        <div class="cards">
-            <div class="card">128 GB</div>
-            <div class="card active">256 GB</div>
-            <div class="card">512 GB</div>
-        </div>
-    </div>
-
-    <button id="orderBtn">Place Order</button>
-
-    <div class="success" id="success">
-        <div class="checkmark">✓</div>
-        <h2>Order Successful!</h2>
-        <div class="confetti"></div>
-    </div>
-</div>
-
-<script>
-const btn = document.getElementById("orderBtn");
-const success = document.getElementById("success");
-
-btn.onclick = () => {
-    success.style.display = "block";
-};
-</script>
-
-</body>
-</html>*{
+<style>
+*{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial,sans-serif;
+font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
 }
 
 body{
-background:#F5EED2;
+background: radial-gradient(circle at top, #132228, #05080a);
+color:#F5EED2;
 display:flex;
 justify-content:center;
 align-items:center;
@@ -64,105 +27,211 @@ padding:20px;
 }
 
 .container{
-max-width:500px;
 width:100%;
-background:white;
-padding:30px;
-border-radius:25px;
+max-width:520px;
 text-align:center;
-box-shadow:0 10px 30px rgba(0,0,0,.15);
 }
 
 h1{
-color:#132228;
-margin-bottom:30px;
+font-size:30px;
+margin-bottom:8px;
 }
 
-.section{
-margin-bottom:30px;
+p{
+opacity:0.6;
+margin-bottom:25px;
 }
 
 h2{
-color:#132228;
-margin-bottom:15px;
+margin:20px 0 10px;
+color:#EBAE29;
+font-size:16px;
+letter-spacing:1px;
+text-transform:uppercase;
 }
 
-.cards{
+/* CARDS */
+.grid{
 display:flex;
-gap:15px;
+gap:12px;
 flex-wrap:wrap;
+justify-content:center;
 }
 
 .card{
 flex:1;
-padding:20px;
-background:#F5EED2;
-border:2px solid transparent;
-border-radius:18px;
+min-width:140px;
+padding:16px;
+border-radius:16px;
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.08);
 cursor:pointer;
-font-weight:bold;
-color:#132228;
+transition:0.25s;
+backdrop-filter: blur(10px);
+}
+
+.card:hover{
+transform:scale(1.05);
 }
 
 .active{
 background:#EBAE29;
+color:#132228;
+font-weight:bold;
 }
 
-button{
-width:100%;
-padding:18px;
-background:#132228;
-color:white;
-border:none;
-border-radius:18px;
-font-size:18px;
+/* STORAGE PILLS */
+.pill{
+padding:12px 16px;
+border-radius:999px;
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.08);
 cursor:pointer;
+transition:0.25s;
 }
 
+.pill:hover{
+transform:scale(1.05);
+}
+
+.pill.active{
+background:#EBAE29;
+color:#132228;
+font-weight:bold;
+}
+
+/* BUTTON */
+button{
+margin-top:25px;
+width:100%;
+padding:16px;
+border:none;
+border-radius:16px;
+background:#EBAE29;
+color:#132228;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+transition:0.25s;
+}
+
+button:hover{
+transform:scale(1.03);
+}
+
+/* SUCCESS */
 .success{
 display:none;
-margin-top:30px;
-animation:fade .6s;
+margin-top:25px;
+animation:fade 0.5s ease;
 }
 
-.checkmark{
-width:100px;
-height:100px;
-background:#EBAE29;
+.check{
+width:90px;
+height:90px;
+margin:auto;
 border-radius:50%;
+background:#EBAE29;
+color:#132228;
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:50px;
-margin:auto;
-color:white;
+font-size:42px;
+font-weight:bold;
 }
 
 .success h2{
-margin-top:20px;
+color:#F5EED2;
+margin-top:15px;
 }
 
-.confetti{
-height:80px;
-background:
-radial-gradient(circle,#EBAE29 20%,transparent 20%),
-radial-gradient(circle,#132228 20%,transparent 20%);
-background-size:30px 30px;
-animation:confetti 1s infinite linear;
-}
-
-@keyframes confetti{
-from{background-position:0 0;}
-to{background-position:0 100px;}
+.success p{
+opacity:0.6;
 }
 
 @keyframes fade{
-from{opacity:0;transform:scale(.8);}
+from{opacity:0;transform:scale(0.8);}
 to{opacity:1;transform:scale(1);}
 }
 
+/* MOBILE */
 @media(max-width:600px){
-.cards{
-flex-direction:column;
+.card{
+min-width:100%;
 }
 }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>iPhone Experience</h1>
+<p>Choose your perfect device</p>
+
+<h2>Model</h2>
+<div class="grid" id="models">
+<div class="card active">iPhone 16</div>
+<div class="card">iPhone 17</div>
+</div>
+
+<h2>Storage</h2>
+<div class="grid" id="storage">
+<div class="pill">128GB</div>
+<div class="pill active">256GB</div>
+<div class="pill">512GB</div>
+</div>
+
+<button onclick="order()">Order</button>
+
+<div class="success" id="success">
+<div class="check">✓</div>
+<h2>Order Confirmed</h2>
+<p>Your iPhone will be prepared shortly</p>
+</div>
+
+</div>
+
+<script>
+// MODEL SELECT
+document.querySelectorAll("#models .card").forEach(el=>{
+el.onclick = () => {
+document.querySelectorAll("#models .card").forEach(i=>i.classList.remove("active"));
+el.classList.add("active");
+}
+});
+
+// STORAGE SELECT
+document.querySelectorAll("#storage .pill").forEach(el=>{
+el.onclick = () => {
+document.querySelectorAll("#storage .pill").forEach(i=>i.classList.remove("active"));
+el.classList.add("active");
+}
+});
+
+// ORDER FUNCTION
+function order(){
+
+document.getElementById("success").style.display = "block";
+
+// CONFETTI
+confetti({
+particleCount: 180,
+spread: 90,
+origin: { y: 0.6 }
+});
+
+// second burst
+setTimeout(()=>{
+confetti({
+particleCount: 120,
+spread: 70,
+origin: { y: 0.4 }
+});
+},300);
+}
+</script>
+
+</body>
+</html>
