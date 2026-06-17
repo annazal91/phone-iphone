@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose Your iPhone</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Choose Your iPhone</h1>
+
+    <div class="section">
+        <h2>Select Model</h2>
+        <div class="cards">
+            <div class="card">iPhone 16</div>
+            <div class="card active" id="iphone17">iPhone 17</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Select Storage</h2>
+        <div class="cards">
+            <div class="card">128 GB</div>
+            <div class="card active">256 GB</div>
+            <div class="card">512 GB</div>
+        </div>
+    </div>
+
+    <button id="orderBtn">Place Order</button>
+
+    <div class="success" id="success">
+        <div class="checkmark">✓</div>
+        <h2>Order Successful!</h2>
+        <div class="confetti"></div>
+    </div>
+</div>
+
+<script>
+const btn = document.getElementById("orderBtn");
+const success = document.getElementById("success");
+
+btn.onclick = () => {
+    success.style.display = "block";
+};
+</script>
+
+</body>
+</html>*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#F5EED2;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+padding:20px;
+}
+
+.container{
+max-width:500px;
+width:100%;
+background:white;
+padding:30px;
+border-radius:25px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,.15);
+}
+
+h1{
+color:#132228;
+margin-bottom:30px;
+}
+
+.section{
+margin-bottom:30px;
+}
+
+h2{
+color:#132228;
+margin-bottom:15px;
+}
+
+.cards{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+}
+
+.card{
+flex:1;
+padding:20px;
+background:#F5EED2;
+border:2px solid transparent;
+border-radius:18px;
+cursor:pointer;
+font-weight:bold;
+color:#132228;
+}
+
+.active{
+background:#EBAE29;
+}
+
+button{
+width:100%;
+padding:18px;
+background:#132228;
+color:white;
+border:none;
+border-radius:18px;
+font-size:18px;
+cursor:pointer;
+}
+
+.success{
+display:none;
+margin-top:30px;
+animation:fade .6s;
+}
+
+.checkmark{
+width:100px;
+height:100px;
+background:#EBAE29;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:50px;
+margin:auto;
+color:white;
+}
+
+.success h2{
+margin-top:20px;
+}
+
+.confetti{
+height:80px;
+background:
+radial-gradient(circle,#EBAE29 20%,transparent 20%),
+radial-gradient(circle,#132228 20%,transparent 20%);
+background-size:30px 30px;
+animation:confetti 1s infinite linear;
+}
+
+@keyframes confetti{
+from{background-position:0 0;}
+to{background-position:0 100px;}
+}
+
+@keyframes fade{
+from{opacity:0;transform:scale(.8);}
+to{opacity:1;transform:scale(1);}
+}
+
+@media(max-width:600px){
+.cards{
+flex-direction:column;
+}
+}
