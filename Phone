@@ -1,0 +1,463 @@
+python3 << 'PYEOF'
+import json, base64
+
+fnames = ['/mnt/user-data/uploads/IMG_9851.webp',
+          '/mnt/user-data/uploads/IMG_9854.jpeg',
+          '/mnt/user-data/uploads/IMG_9853.webp',
+          '/mnt/user-data/uploads/IMG_9855.webp']
+mimes = ['image/webp','image/jpeg','image/webp','image/webp']
+
+imgs = []
+for fname,mime in zip(fnames,mimes):
+    with open(fname,'rb') as f:
+        data = base64.b64encode(f.read()).decode()
+    imgs.append(f'data:{mime};base64,{data}')
+
+html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>iPhone Store</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+*{{margin:0;padding:0;box-sizing:border-box;}}
+:root{{
+  --gold:#EBAE29;--dark:#132228;--cream:#F5EED2;
+  --gold-light:#f5c842;--text-dark:#132228;--text-muted:#5a6a70;
+  --green:#22c55e;
+}}
+body{{font-family:'Inter',sans-serif;background:var(--dark);min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}}
+.bg{{position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(235,174,41,0.12) 0%,transparent 60%),linear-gradient(160deg,#132228 0%,#1a2f38 50%,#0d1a1f 100%);z-index:0;}}
+.container{{position:relative;z-index:10;width:100%;max-width:420px;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px 140px;}}
+.phase{{display:none;flex-direction:column;align-items:center;width:100%;}}
+.phase.active{{display:flex;animation:fadeUp 0.5s ease forwards;}}
+@keyframes fadeUp{{from{{opacity:0;transform:translateY(20px);}}to{{opacity:1;transform:translateY(0);}}}}
+
+/* BROWSER */
+.browser-outer{{width:100%;background:rgba(245,238,210,0.97);border-radius:18px;box-shadow:0 32px 80px rgba(0,0,0,0.5),0 0 0 1px rgba(235,174,41,0.2);overflow:hidden;}}
+.chrome-bar{{background:linear-gradient(180deg,#e8e0c8,#ddd5bc);padding:10px 14px 8px;display:flex;flex-direction:column;gap:7px;}}
+.chrome-dots{{display:flex;gap:5px;}}
+.dot-r{{width:10px;height:10px;border-radius:50%;background:#ff5f57;}}
+.dot-y{{width:10px;height:10px;border-radius:50%;background:#ffbd2e;}}
+.dot-g{{width:10px;height:10px;border-radius:50%;background:#28c840;}}
+.chrome-url{{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.7);border-radius:6px;padding:4px 10px;border:1px solid rgba(0,0,0,0.08);}}
+.url-lock{{font-size:9px;color:#5a7a5a;}}
+.url-text{{font-size:10px;color:#2a3a2a;font-weight:500;}}
+.site-header{{background:var(--dark);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;}}
+.site-logo{{font-size:14px;font-weight:800;color:var(--gold);}}
+.site-nav{{display:flex;gap:10px;align-items:center;}}
+.nav-link{{font-size:9px;color:rgba(245,238,210,0.5);font-weight:500;}}
+.cart-btn{{position:relative;background:var(--gold);border:none;border-radius:6px;padding:4px 9px;cursor:pointer;font-size:13px;}}
+.cart-count{{position:absolute;top:-5px;right:-5px;width:14px;height:14px;background:#ef4444;border-radius:50%;font-size:8px;font-weight:700;color:white;display:flex;align-items:center;justify-content:center;}}
+.site-hero{{background:linear-gradient(135deg,#132228,#1e3540);padding:12px 16px;text-align:center;}}
+.hero-title{{font-size:15px;font-weight:800;color:var(--cream);}}
+.hero-sub{{font-size:9px;color:var(--gold);margin-top:2px;letter-spacing:0.08em;}}
+.site-grid{{padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;background:var(--cream);}}
+.product-card{{background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);border:1.5px solid transparent;transition:transform 0.2s,border-color 0.2s;cursor:pointer;}}
+.product-card:hover{{transform:translateY(-2px);border-color:rgba(235,174,41,0.4);}}
+.product-card.selected{{border-color:var(--gold);box-shadow:0 0 16px rgba(235,174,41,0.3);}}
+.card-img{{width:100%;height:88px;display:flex;align-items:center;justify-content:center;overflow:hidden;}}
+.card-phone-img{{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply;filter:brightness(0.95) contrast(1.05);}}
+.card-body{{padding:8px;}}
+.card-name{{font-size:10px;font-weight:700;color:var(--text-dark);margin-bottom:5px;}}
+.memory-select{{display:flex;gap:3px;margin-bottom:6px;}}
+.mem-btn{{font-size:8px;font-weight:600;padding:2px 5px;border-radius:4px;border:1px solid rgba(19,34,40,0.2);background:transparent;color:var(--text-muted);cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;}}
+.mem-btn.active{{background:var(--dark);color:var(--gold);border-color:var(--dark);}}
+.add-btn{{width:100%;padding:6px;background:var(--green);border:none;border-radius:7px;color:white;font-size:9px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;}}
+
+/* SLIDER MODAL */
+.slider-modal{{display:none;position:fixed;inset:0;z-index:200;align-items:flex-end;justify-content:center;}}
+.slider-modal.open{{display:flex;}}
+.slider-backdrop{{position:absolute;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);}}
+.slider-sheet{{position:relative;z-index:201;width:100%;max-width:420px;background:var(--cream);border-radius:20px 20px 0 0;padding:24px 20px 32px;animation:slideUp 0.4s cubic-bezier(0.34,1.2,0.64,1);}}
+@keyframes slideUp{{from{{transform:translateY(100%);}}to{{transform:translateY(0);}}}}
+.slider-handle{{width:36px;height:3px;background:rgba(19,34,40,0.2);border-radius:2px;margin:0 auto 18px;}}
+.slider-sheet-title{{font-size:15px;font-weight:800;color:var(--dark);margin-bottom:4px;text-align:center;}}
+.slider-sheet-sub{{font-size:10px;color:var(--text-muted);text-align:center;margin-bottom:20px;}}
+
+/* selected phone preview */
+.selected-preview{{display:flex;align-items:center;gap:12px;background:white;border-radius:12px;padding:10px 14px;margin-bottom:20px;border:1px solid rgba(19,34,40,0.08);}}
+.preview-img{{width:36px;height:44px;object-fit:contain;mix-blend-mode:multiply;}}
+.preview-name{{font-size:11px;font-weight:700;color:var(--dark);}}
+.preview-mem{{font-size:9px;color:var(--text-muted);margin-top:2px;}}
+
+/* Slider */
+.months-display{{text-align:center;margin-bottom:16px;}}
+.months-num{{font-size:48px;font-weight:800;color:var(--dark);line-height:1;transition:color 0.3s;}}
+.months-num.highlight{{color:var(--gold);animation:numPop 0.3s cubic-bezier(0.34,1.56,0.64,1);}}
+@keyframes numPop{{0%{{transform:scale(1);}}50%{{transform:scale(1.15);}}100%{{transform:scale(1);}}}}
+.months-label{{font-size:11px;color:var(--text-muted);margin-top:4px;letter-spacing:0.05em;}}
+
+.slider-track-wrap{{position:relative;width:100%;height:6px;background:rgba(19,34,40,0.12);border-radius:3px;margin:8px 0 6px;cursor:pointer;}}
+.slider-track-fill{{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:3px;width:0%;transition:width 0.05s;}}
+.slider-thumb{{position:absolute;top:50%;transform:translate(-50%,-50%);width:26px;height:26px;background:white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.2),0 0 0 3px var(--gold);cursor:grab;left:0%;transition:left 0.05s;display:flex;align-items:center;justify-content:center;}}
+.slider-thumb::after{{content:'';width:8px;height:8px;background:var(--gold);border-radius:50%;}}
+.slider-range-labels{{display:flex;justify-content:space-between;font-size:9px;color:var(--text-muted);margin-top:4px;margin-bottom:20px;}}
+
+.confirm-btn{{width:100%;padding:14px;background:var(--green);border:none;border-radius:12px;color:white;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 6px 20px rgba(34,197,94,0.3);transition:all 0.2s;opacity:0.4;pointer-events:none;}}
+.confirm-btn.ready{{opacity:1;pointer-events:all;}}
+
+/* SUCCESS */
+.success-wrap{{display:flex;flex-direction:column;align-items:center;gap:14px;padding-bottom:160px;}}
+.success-circle{{width:76px;height:76px;background:linear-gradient(135deg,#166534,#22c55e);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;box-shadow:0 0 40px rgba(34,197,94,0.5);opacity:0;transform:scale(0);}}
+.success-circle.pop{{animation:popIn 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;}}
+@keyframes popIn{{from{{transform:scale(0);opacity:0;}}to{{transform:scale(1);opacity:1);}}}}
+.success-title{{font-size:22px;font-weight:800;color:var(--cream);text-align:center;opacity:0;}}
+.success-title.show{{animation:fadeUp 0.5s ease 0.4s forwards;}}
+
+/* ROAD right→left truck */
+.road-scene{{position:fixed;bottom:0;left:0;right:0;height:80px;opacity:0;transition:opacity 0.6s ease;z-index:50;}}
+.road-scene.show{{opacity:1;}}
+.road{{position:absolute;bottom:0;left:0;right:0;height:52px;background:#1a2a1a;border-top:3px solid var(--green);overflow:hidden;}}
+.road-stripe{{position:absolute;top:50%;transform:translateY(-50%);height:4px;width:38px;background:rgba(255,255,255,0.22);border-radius:2px;animation:roadMove 0.65s linear infinite;}}
+@keyframes roadMove{{from{{left:110%;}}to{{left:-50px;}}}}
+
+/* Truck: starts right, drives to left */
+.truck-wrap{{position:fixed;bottom:52px;right:-220px;transition:right 3.8s cubic-bezier(0.25,0.1,0.25,1);z-index:51;}}
+.truck-wrap.drive{{right:110%;}}
+
+.on-way{{font-size:20px;font-weight:800;color:var(--gold);text-align:center;position:fixed;bottom:62px;left:50%;transform:translateX(-50%);opacity:0;white-space:nowrap;z-index:52;transition:opacity 0.5s ease 2.5s;text-shadow:0 0 20px rgba(235,174,41,0.4);}}
+.on-way.show{{opacity:1;}}
+
+/* CONFETTI */
+.confetti-container{{position:fixed;inset:0;pointer-events:none;z-index:100;overflow:hidden;}}
+.confetti-piece{{position:absolute;opacity:0;animation:confettiFall linear forwards;}}
+@keyframes confettiFall{{0%{{transform:translateY(-10px) rotate(0deg);opacity:1;}}80%{{opacity:1;}}100%{{transform:translateY(105vh) rotate(720deg);opacity:0;}}}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="confetti-container" id="confetti"></div>
+
+<!-- TRUCK: right→left, faces left naturally -->
+<div class="truck-wrap" id="truck">
+  <svg width="210" height="78" viewBox="0 0 210 78" fill="none">
+    <!-- Body/cargo -->
+    <rect x="55" y="10" width="140" height="50" rx="4" fill="#1e3a4a"/>
+    <!-- Yellow top stripe -->
+    <rect x="55" y="10" width="140" height="4" fill="#EBAE29" opacity="0.95"/>
+    <!-- Blue mid stripe -->
+    <rect x="55" y="32" width="140" height="3" fill="#4a9acc" opacity="0.7"/>
+    <!-- Text -->
+    <text x="80" y="27" font-family="Inter,sans-serif" font-size="8" font-weight="800" fill="#EBAE29">IPHONE STORE</text>
+    <!-- Door line -->
+    <line x1="130" y1="10" x2="130" y2="60" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <!-- Cabin -->
+    <rect x="8" y="18" width="52" height="42" rx="5" fill="#132228"/>
+    <!-- Blue cabin accent -->
+    <rect x="8" y="18" width="52" height="3" fill="#4a9acc" opacity="0.8"/>
+    <!-- Windshield -->
+    <rect x="12" y="24" width="38" height="22" rx="3" fill="#4a9acc" opacity="0.7"/>
+    <rect x="12" y="24" width="38" height="22" rx="3" fill="url(#wg2)" opacity="0.35"/>
+    <!-- Dashboard line -->
+    <rect x="12" y="43" width="38" height="3" fill="#0d1a20" opacity="0.5"/>
+    <!-- Headlight left -->
+    <rect x="3" y="30" width="8" height="6" rx="2" fill="#fde88a"/>
+    <ellipse cx="4" cy="33" rx="5" ry="4" fill="rgba(253,232,138,0.25)"/>
+    <!-- Blue door handle -->
+    <rect x="22" y="35" width="12" height="3" rx="1.5" fill="#4a9acc" opacity="0.6"/>
+
+    <!-- Wheel 1 (cabin) -->
+    <circle cx="32" cy="65" r="13" fill="#0d1a20"/>
+    <circle cx="32" cy="65" r="9" fill="#1a2f38"/>
+    <circle cx="32" cy="65" r="4" fill="#EBAE29"/>
+    <line x1="32" y1="56" x2="32" y2="74" stroke="#0d1a20" stroke-width="1.5"/>
+    <line x1="23" y1="65" x2="41" y2="65" stroke="#0d1a20" stroke-width="1.5"/>
+    <line x1="25.6" y1="58.6" x2="38.4" y2="71.4" stroke="#0d1a20" stroke-width="1.5"/>
+    <line x1="25.6" y1="71.4" x2="38.4" y2="58.6" stroke="#0d1a20" stroke-width="1.5"/>
+
+    <!-- Wheel 2 (mid body) -->
+    <circle cx="115" cy="65" r="13" fill="#0d1a20"/>
+    <circle cx="115" cy="65" r="9" fill="#1a2f38"/>
+    <circle cx="115" cy="65" r="4" fill="#EBAE29"/>
+    <line x1="115" y1="56" x2="115" y2="74" stroke="#0d1a20" stroke-width="1.5"/>
+    <line x1="106" y1="65" x2="124" y2="65" stroke="#0d1a20" stroke-width="1.5"/>
+    <line x1="108.6" y1="58.6" x2="121.4" y2="71.4" stroke="#0d1a20" stroke-width="1.5"/>
+    <line x1="108.6" y1="71.4" x2="121.4" y2="58.6" stroke="#0d1a20" stroke-width="1.5"/>
+
+    <!-- Wheel 3 (rear body) -->
+    <circle cx="178" cy="65" r="13" fill="#0d1a20"/>
+    <circle cx="178" cy="65" r="9" fill="#1a2f38"/>
+    <circle cx="178" cy="65" r="4" fill="#EBAE29"/>
+    <line x1="178" y1="56" x2="178" y2="74" stroke="#0d1a20" stroke-width="1.5"/>
+    <line x1="169" y1="65" x2="187" y2="65" stroke="#0d1a20" stroke-width="1.5"/>
+    <line x1="171.6" y1="58.6" x2="184.4" y2="71.4" stroke="#0d1a20" stroke-width="1.5"/>
+    <line x1="171.6" y1="71.4" x2="184.4" y2="58.6" stroke="#0d1a20" stroke-width="1.5"/>
+
+    <defs>
+      <linearGradient id="wg2" x1="1" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="white"/>
+        <stop offset="100%" stop-color="transparent"/>
+      </linearGradient>
+    </defs>
+  </svg>
+</div>
+
+<!-- ROAD -->
+<div class="road-scene" id="roadScene">
+  <div class="road">
+    <div class="road-stripe" style="animation-delay:0s"></div>
+    <div class="road-stripe" style="animation-delay:0.22s"></div>
+    <div class="road-stripe" style="animation-delay:0.44s"></div>
+    <div class="road-stripe" style="animation-delay:0.66s"></div>
+    <div class="road-stripe" style="animation-delay:0.88s"></div>
+  </div>
+</div>
+<div class="on-way" id="onWay">📦 On the way!</div>
+
+<div class="container">
+
+  <!-- PHASE 1: SHOP -->
+  <div class="phase active" id="phase1">
+    <div class="browser-outer">
+      <div class="chrome-bar">
+        <div class="chrome-dots"><div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div></div>
+        <div class="chrome-url"><span class="url-lock">🔒</span><span class="url-text">iphonestore.com/collection</span></div>
+      </div>
+      <div class="site-header">
+        <div class="site-logo">🍎 iPhone Store</div>
+        <div class="site-nav">
+          <span class="nav-link">Shop</span>
+          <span class="nav-link">Deals</span>
+          <button class="cart-btn" onclick="openSlider()">🛒<span class="cart-count" id="cartCount">0</span></button>
+        </div>
+      </div>
+      <div class="site-hero">
+        <div class="hero-title">iPhone Collection 2025</div>
+        <div class="hero-sub">For illustration purposes only</div>
+      </div>
+      <div class="site-grid">
+
+        <div class="product-card" id="card0" onclick="selectPhone(0,'iPhone 16 Pro')">
+          <div class="card-img" style="background:#fce4ec;">
+            <img class="card-phone-img" src="{imgs[0]}" />
+          </div>
+          <div class="card-body">
+            <div class="card-name">iPhone 16 Pro</div>
+            <div class="memory-select" id="mem0">
+              <button class="mem-btn active" onclick="event.stopPropagation();selectMem(0,this,'128GB')">128</button>
+              <button class="mem-btn" onclick="event.stopPropagation();selectMem(0,this,'256GB')">256</button>
+              <button class="mem-btn" onclick="event.stopPropagation();selectMem(0,this,'512GB')">512</button>
+            </div>
+            <button class="add-btn" onclick="event.stopPropagation();selectPhone(0,'iPhone 16 Pro')">Select</button>
+          </div>
+        </div>
+
+        <div class="product-card" id="card1" onclick="selectPhone(1,'iPhone 16 Pro Max')">
+          <div class="card-img" style="background:#ede7f6;">
+            <img class="card-phone-img" src="{imgs[1]}" />
+          </div>
+          <div class="card-body">
+            <div class="card-name">iPhone 16 Pro Max</div>
+            <div class="memory-select" id="mem1">
+              <button class="mem-btn active" onclick="event.stopPropagation();selectMem(1,this,'128GB')">128</button>
+              <button class="mem-btn" onclick="event.stopPropagation();selectMem(1,this,'256GB')">256</button>
+              <button class="mem-btn" onclick="event.stopPropagation();selectMem(1,this,'512GB')">512</button>
+            </div>
+            <button class="add-btn" onclick="event.stopPropagation();selectPhone(1,'iPhone 16 Pro Max')">Select</button>
+          </div>
+        </div>
+
+        <div class="product-card" id="card2" onclick="selectPhone(2,'iPhone 17 Pro')">
+          <div class="card-img" style="background:#e3f0f8;">
+            <img class="card-phone-img" src="{imgs[2]}" />
+          </div>
+          <div class="card-body">
+            <div class="card-name">iPhone 17 Pro</div>
+            <div class="memory-select" id="mem2">
+              <button class="mem-btn active" onclick="event.stopPropagation();selectMem(2,this,'128GB')">128</button>
+              <button class="mem-btn" onclick="event.stopPropagation();selectMem(2,this,'256GB')">256</button>
+              <button class="mem-btn" onclick="event.stopPropagation();selectMem(2,this,'512GB')">512</button>
+            </div>
+            <button class="add-btn" onclick="event.stopPropagation();selectPhone(2,'iPhone 17 Pro')">Select</button>
+          </div>
+        </div>
+
+        <div class="product-card" id="card3" onclick="selectPhone(3,'iPhone 17 Pro Max')">
+          <div class="card-img" style="background:#fff3e0;">
+            <img class="card-phone-img" src="{imgs[3]}" />
+          </div>
+          <div class="card-body">
+            <div class="card-name">iPhone 17 Pro Max</div>
+            <div class="memory-select" id="mem3">
+              <button class="mem-btn active" onclick="event.stopPropagation();selectMem(3,this,'128GB')">128</button>
+              <button class="mem-btn" onclick="event.stopPropagation();selectMem(3,this,'256GB')">256</button>
+              <button class="mem-btn" onclick="event.stopPropagation();selectMem(3,this,'512GB')">512</button>
+            </div>
+            <button class="add-btn" onclick="event.stopPropagation();selectPhone(3,'iPhone 17 Pro Max')">Select</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 2: SUCCESS -->
+  <div class="phase" id="phase2">
+    <div class="success-wrap">
+      <div class="success-circle" id="successCircle">✓</div>
+      <div class="success-title" id="successTitle">Order placed!</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SLIDER MODAL -->
+<div class="slider-modal" id="sliderModal">
+  <div class="slider-backdrop" onclick="closeSlider()"></div>
+  <div class="slider-sheet">
+    <div class="slider-handle"></div>
+    <div class="slider-sheet-title">Choose payment plan</div>
+    <div class="slider-sheet-sub">Select number of monthly installments</div>
+
+    <div class="selected-preview" id="previewBox">
+      <img class="preview-img" id="previewImg" src="{imgs[0]}" />
+      <div>
+        <div class="preview-name" id="previewName">iPhone 16 Pro</div>
+        <div class="preview-mem" id="previewMem">128GB</div>
+      </div>
+    </div>
+
+    <div class="months-display">
+      <div class="months-num" id="monthsNum">9</div>
+      <div class="months-label">months</div>
+    </div>
+
+    <div class="slider-track-wrap" id="sliderTrack">
+      <div class="slider-track-fill" id="sliderFill"></div>
+      <div class="slider-thumb" id="sliderThumb"></div>
+    </div>
+    <div class="slider-range-labels">
+      <span>9 mo</span>
+      <span>24 mo</span>
+    </div>
+
+    <button class="confirm-btn" id="confirmBtn" onclick="placeOrder()">✓ Confirm order</button>
+  </div>
+</div>
+
+<script>
+const cartImgs = ['{imgs[0]}','{imgs[1]}','{imgs[2]}','{imgs[3]}'];
+const selectedMem = ['128GB','128GB','128GB','128GB'];
+let selectedIdx = -1;
+let selectedName = '';
+let sliderDone = false;
+const MIN_MONTHS = 9, MAX_MONTHS = 24, TARGET_MONTHS = 18;
+
+function selectMem(idx, btn, mem) {{
+  selectedMem[idx] = mem;
+  document.querySelectorAll('#mem'+idx+' .mem-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}}
+
+function selectPhone(idx, name) {{
+  selectedIdx = idx;
+  selectedName = name;
+  document.querySelectorAll('.product-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('card'+idx).classList.add('selected');
+  document.getElementById('cartCount').textContent = '1';
+  openSlider();
+}}
+
+function openSlider() {{
+  if (selectedIdx === -1) return;
+  document.getElementById('previewImg').src = cartImgs[selectedIdx];
+  document.getElementById('previewName').textContent = selectedName;
+  document.getElementById('previewMem').textContent = selectedMem[selectedIdx];
+  sliderDone = false;
+  document.getElementById('confirmBtn').classList.remove('ready');
+  document.getElementById('monthsNum').classList.remove('highlight');
+  // reset slider to 9 months (start)
+  updateSliderUI(0);
+  document.getElementById('sliderModal').classList.add('open');
+  // auto-animate
+  setTimeout(autoSlide, 500);
+}}
+
+function closeSlider() {{
+  document.getElementById('sliderModal').classList.remove('open');
+}}
+
+let pct = 0;
+function updateSliderUI(p) {{
+  pct = Math.max(0, Math.min(1, p));
+  const months = Math.round(MIN_MONTHS + pct * (MAX_MONTHS - MIN_MONTHS));
+  document.getElementById('monthsNum').textContent = months;
+  document.getElementById('sliderFill').style.width = (pct*100)+'%';
+  document.getElementById('sliderThumb').style.left = (pct*100)+'%';
+
+  if (months >= TARGET_MONTHS && !sliderDone) {{
+    sliderDone = true;
+    const numEl = document.getElementById('monthsNum');
+    numEl.classList.add('highlight');
+    document.getElementById('confirmBtn').classList.add('ready');
+  }}
+}}
+
+function autoSlide() {{
+  const targetPct = (TARGET_MONTHS - MIN_MONTHS) / (MAX_MONTHS - MIN_MONTHS);
+  let start = null;
+  const dur = 1800;
+  function step(ts) {{
+    if (!start) start = ts;
+    const prog = Math.min((ts - start) / dur, 1);
+    const eased = prog < 0.5 ? 2*prog*prog : 1-Math.pow(-2*prog+2,2)/2;
+    updateSliderUI(eased * targetPct);
+    if (prog < 1) requestAnimationFrame(step);
+  }}
+  requestAnimationFrame(step);
+}}
+
+// Manual drag
+const track = document.getElementById('sliderTrack');
+const thumb = document.getElementById('sliderThumb');
+let dragging = false;
+
+function getPct(clientX) {{
+  const rect = track.getBoundingClientRect();
+  return (clientX - rect.left) / rect.width;
+}}
+
+thumb.addEventListener('mousedown', e => {{ dragging=true; e.preventDefault(); }});
+thumb.addEventListener('touchstart', e => {{ dragging=true; }}, {{passive:true}});
+window.addEventListener('mousemove', e => {{ if(dragging) updateSliderUI(getPct(e.clientX)); }});
+window.addEventListener('touchmove', e => {{ if(dragging) updateSliderUI(getPct(e.touches[0].clientX)); }}, {{passive:true}});
+window.addEventListener('mouseup', () => dragging=false);
+window.addEventListener('touchend', () => dragging=false);
+track.addEventListener('click', e => updateSliderUI(getPct(e.clientX)));
+
+function placeOrder() {{
+  closeSlider();
+  document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+  document.getElementById('phase2').classList.add('active');
+  setTimeout(() => {{
+    document.getElementById('successCircle').classList.add('pop');
+    document.getElementById('successTitle').classList.add('show');
+    spawnConfetti(250);
+    setTimeout(() => document.getElementById('roadScene').classList.add('show'), 900);
+    setTimeout(() => document.getElementById('truck').classList.add('drive'), 1100);
+    document.getElementById('onWay').classList.add('show');
+  }}, 300);
+}}
+
+function spawnConfetti(count) {{
+  const container = document.getElementById('confetti');
+  const colors = ['#EBAE29','#f5c842','#fde88a','#22c55e','#60a5fa','#a78bfa','#f472b6','#fb923c','#ffffff','#ff6b6b'];
+  for (let i=0; i<count; i++) {{
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const size = 4+Math.random()*10;
+    piece.style.cssText=`left:${{Math.random()*100}}vw;top:-10px;width:${{size}}px;height:${{size}}px;background:${{colors[Math.floor(Math.random()*colors.length)]}};border-radius:${{Math.random()>0.5?'50%':'3px'}};animation-delay:${{Math.random()*0.8}}s;animation-duration:${{2+Math.random()*2.5}}s;`;
+    container.appendChild(piece);
+    setTimeout(() => piece.remove(), 5000);
+  }}
+}}
+</script>
+</body>
+</html>"""
+
+with open('/mnt/user-data/outputs/iphone_store_v4.html','w') as f:
+    f.write(html)
+print('Done! Size:', len(html))
+PYEOF
